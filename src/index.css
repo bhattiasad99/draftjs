@@ -14,7 +14,7 @@ code {
 
 .superFancyBlockquote {
   color: #999;
-  font-family: "Hoefler Text", Georgia, serif;
+  /* font-family: "Hoefler Text", Georgia, serif; */
   font-style: italic;
   text-align: center;
 }

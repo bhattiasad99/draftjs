@@ -5,6 +5,7 @@ import createHighlightPlugin from "./Plugins/highlightPlugin";
 import addLinkPlugin from "./Plugins/AddLinkPlugin";
 import "@draft-js-plugins/counter/lib/plugin.css";
 import customPluginTest from "./Plugins/testing";
+import Latex from "react-latex";
 
 const constants = {
   underline: "UNDERLINE",
@@ -23,9 +24,13 @@ const EditorFunctional = () => {
   const onChangeHandler = (editorState) => {
     setEditorState(editorState);
   };
+  //   executing plugins
   const highlightPlugin = createHighlightPlugin(highlightColor);
   const customPlugin = customPluginTest();
+
+  //   add plugins to editor
   const plugins = [highlightPlugin, addLinkPlugin, customPlugin];
+  //   general key command handler
   const handleKeyCommand = (command) => {
     // this will give us a new state object to pass into the setState
     // this will NOT directly update the state
@@ -36,6 +41,7 @@ const EditorFunctional = () => {
     } else return "not-handled";
   };
 
+  //   events
   const onUnderlineClick = (e) => {
     e.preventDefault();
     onChangeHandler(
@@ -55,6 +61,18 @@ const EditorFunctional = () => {
     onChangeHandler(
       RichUtils.toggleInlineStyle(editorState, constants.highlight)
     );
+  };
+  const addCustomStyle = (e) => {
+    e.preventDefault();
+    onChangeHandler(RichUtils.toggleInlineStyle(editorState, "custom"));
+  };
+  const onHeading = (e) => {
+    e.preventDefault();
+    onChangeHandler(RichUtils.toggleBlockType(editorState, "header-one"));
+  };
+  const onBlock = (e) => {
+    e.preventDefault();
+    onChangeHandler(RichUtils.toggleBlockType(editorState, "blockquote"));
   };
   // adds link
   const onAddLink = (e) => {
@@ -78,36 +96,50 @@ const EditorFunctional = () => {
     onChangeHandler(RichUtils.toggleLink(newEditorState, selection, entityKey));
     return "handled";
   };
-
+  function myBlockStyleFn(contentBlock) {
+    const type = contentBlock.getType();
+    if (type === "blockquote") {
+      return "superFancyBlockquote";
+    }
+  }
+  const fraction = `$$\\frac{1}{2}$$`;
+  const expression = `$$\\frac{d}{dx}\\int_{a}^{x}(t)dt = f(x)$$`;
   return (
-    <div style={{ border: "1px solid grey" }}>
-      <div style={{ display: "flex" }}>
-        <button onMouseDown={onUnderlineClick}>
-          <u>U</u>
-        </button>
-        <button onMouseDown={onBoldClick}>
-          <strong>B</strong>
-        </button>
-        <button onMouseDown={onItalicClick}>
-          <em>I</em>
-        </button>
-        <button onMouseDown={onHighlight}>
-          <span style={{ background: "yellow", padding: "0.3em" }}>H</span>
-        </button>
+    <>
+      <Latex>{fraction}</Latex>
+      <Latex>{expression}</Latex>
+      <div style={{ border: "1px solid grey" }}>
+        <div style={{ display: "flex" }}>
+          <button onMouseDown={onUnderlineClick}>
+            <u>U</u>
+          </button>
+          <button onMouseDown={onBoldClick}>
+            <strong>B</strong>
+          </button>
+          <button onMouseDown={onItalicClick}>
+            <em>I</em>
+          </button>
+          <button onMouseDown={onHighlight}>
+            <span style={{ background: "yellow", padding: "0.3em" }}>H</span>
+          </button>
+          <button onMouseDown={onBlock}>testing block</button>
+          <button id="link_url" onClick={onAddLink} className="add-link">
+            <i className="material-icons">attach_file</i>
+          </button>
+          <button onMouseDown={addCustomStyle}>red</button>
+          <button onMouseDown={onHeading}>h1</button>
+        </div>
 
-        <button id="link_url" onClick={onAddLink} className="add-link">
-          <i className="material-icons">attach_file</i>
-        </button>
+        <Editor
+          plugins={plugins}
+          handleKeyCommand={handleKeyCommand}
+          ref={editor}
+          editorState={editorState}
+          onChange={onChangeHandler}
+          blockStyleFn={myBlockStyleFn}
+        />
       </div>
-
-      <Editor
-        plugins={plugins}
-        handleKeyCommand={handleKeyCommand}
-        ref={editor}
-        editorState={editorState}
-        onChange={onChangeHandler}
-      />
-    </div>
+    </>
   );
 };
 
