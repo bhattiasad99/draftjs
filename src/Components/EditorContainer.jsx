@@ -1,5 +1,5 @@
 import React from "react";
-import Editor from "./Editor";
+import Editor from "./EditorFunctional";
 
 // packages:
 // npm i draftjs @draft-js-plugins/editor

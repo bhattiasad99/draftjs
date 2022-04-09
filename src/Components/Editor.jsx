@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { EditorState, RichUtils } from "draft-js";
 import createHighlightPlugin from "./Plugins/highlightPlugin";
 import Editor from "@draft-js-plugins/editor";
+import addLinkPlugin from "./Plugins/AddLinkPlugin";
 
 const highlightPlugin = createHighlightPlugin();
 
@@ -18,11 +19,33 @@ class EditorComp extends Component {
     this.state = {
       editorState: EditorState.createEmpty(),
     };
-    this.plugins = [highlightPlugin];
+    this.plugins = [highlightPlugin, addLinkPlugin];
   }
 
   onChange = (editorState) => {
     this.setState({ editorState });
+  };
+
+  onAddLink = () => {
+    const editorState = this.state.editorState;
+    const selection = editorState.getSelection();
+    const link = window.prompt("Paste the link -");
+    if (!link) {
+      this.onChange(RichUtils.toggleLink(editorState, selection, null));
+      return "handled";
+    }
+    const content = editorState.getCurrentContent();
+    const contentWithEntity = content.createEntity("LINK", "MUTABLE", {
+      url: link,
+    });
+    const newEditorState = EditorState.push(
+      editorState,
+      contentWithEntity,
+      "create-entity"
+    );
+    const entityKey = contentWithEntity.getLastCreatedEntityKey();
+    this.onChange(RichUtils.toggleLink(newEditorState, selection, entityKey));
+    return "handled";
   };
 
   handleKeyCommand = (command) => {
@@ -84,6 +107,9 @@ class EditorComp extends Component {
         </button>
         <button onMouseDown={this.onHighlight}>
           <span style={{ background: "yellow", padding: "0.3em" }}>H</span>
+        </button>
+        <button id="link_url" onClick={this.onAddLink} className="add-link">
+          <i className="material-icons">attach_file</i>
         </button>
         <Editor
           editorState={this.state.editorState}
