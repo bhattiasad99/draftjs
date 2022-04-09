@@ -7,9 +7,6 @@ export default (color) => {
         background: color,
       },
     },
-    hello() {
-      console.log(color);
-    },
     // for guidelines
     // https://draftjs.org/docs/api-reference-editor/#keybindingfn
     keyBindingFn: (e) => {

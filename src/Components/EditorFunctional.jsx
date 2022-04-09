@@ -3,6 +3,8 @@ import Editor from "@draft-js-plugins/editor";
 import { EditorState, RichUtils } from "draft-js";
 import createHighlightPlugin from "./Plugins/highlightPlugin";
 import addLinkPlugin from "./Plugins/AddLinkPlugin";
+import "@draft-js-plugins/counter/lib/plugin.css";
+import customPluginTest from "./Plugins/testing";
 
 const constants = {
   underline: "UNDERLINE",
@@ -13,18 +15,17 @@ const constants = {
 
 const EditorFunctional = () => {
   const editor = React.useRef(null);
+  const counter = React.useRef(null);
   const [highlightColor, setHighlightColor] = React.useState("#fffe0d");
   const [editorState, setEditorState] = React.useState(
     EditorState.createEmpty()
   );
-  const highlightPlugin = createHighlightPlugin(highlightColor);
   const onChangeHandler = (editorState) => {
     setEditorState(editorState);
   };
-  const focusEditor = () => {
-    editor.current.focus();
-  };
-  const plugins = [highlightPlugin, addLinkPlugin];
+  const highlightPlugin = createHighlightPlugin(highlightColor);
+  const customPlugin = customPluginTest();
+  const plugins = [highlightPlugin, addLinkPlugin, customPlugin];
   const handleKeyCommand = (command) => {
     // this will give us a new state object to pass into the setState
     // this will NOT directly update the state
@@ -55,9 +56,27 @@ const EditorFunctional = () => {
       RichUtils.toggleInlineStyle(editorState, constants.highlight)
     );
   };
-
+  // adds link
   const onAddLink = (e) => {
     e.preventDefault();
+    const selection = editorState.getSelection();
+    const link = window.prompt("Paste the link -");
+    if (!link) {
+      onChangeHandler(RichUtils.toggleLink(editorState, selection, null));
+      return "handled";
+    }
+    const content = editorState.getCurrentContent();
+    const contentWithEntity = content.createEntity("LINK", "MUTABLE", {
+      url: link,
+    });
+    const newEditorState = EditorState.push(
+      editorState,
+      contentWithEntity,
+      "create-entity"
+    );
+    const entityKey = contentWithEntity.getLastCreatedEntityKey();
+    onChangeHandler(RichUtils.toggleLink(newEditorState, selection, entityKey));
+    return "handled";
   };
 
   return (
