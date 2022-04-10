@@ -102,12 +102,14 @@ const EditorFunctional = () => {
       return "superFancyBlockquote";
     }
   }
-  const fraction = `$$\\frac{1}{2}$$`;
-  const expression = `$$\\frac{d}{dx}\\int_{a}^{x}(t)dt = f(x)$$`;
+  const fraction = `$$\\tilde{a}$$`;
+  const expression = ``;
   return (
     <>
       <Latex>{fraction}</Latex>
-      <Latex>{expression}</Latex>
+      <h2>
+        <Latex displayMode={true}>{"$$ \\lparen hello \\rparen $$"}</Latex>
+      </h2>
       <div style={{ border: "1px solid grey" }}>
         <div style={{ display: "flex" }}>
           <button onMouseDown={onUnderlineClick}>
