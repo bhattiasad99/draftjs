@@ -18,3 +18,9 @@ code {
   font-style: italic;
   text-align: center;
 }
+
+.uglyStyles {
+  color: red;
+  background: green;
+  font-size: 2rem;
+}

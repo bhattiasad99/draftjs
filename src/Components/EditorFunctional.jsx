@@ -74,6 +74,10 @@ const EditorFunctional = () => {
     e.preventDefault();
     onChangeHandler(RichUtils.toggleBlockType(editorState, "blockquote"));
   };
+  const test = (e) => {
+    e.preventDefault();
+    onChangeHandler(RichUtils.toggleBlockType(editorState, "ugly"));
+  };
   // adds link
   const onAddLink = (e) => {
     e.preventDefault();
@@ -101,6 +105,9 @@ const EditorFunctional = () => {
     if (type === "blockquote") {
       return "superFancyBlockquote";
     }
+    if (type === "ugly") {
+      return "uglyStyles";
+    }
   }
   const fraction = `$$\\tilde{a}$$`;
   const expression = ``;
@@ -108,6 +115,7 @@ const EditorFunctional = () => {
     <>
       <Latex>{fraction}</Latex>
       <h2>
+        {/* test different math functions */}
         <Latex displayMode={true}>{"$$ \\lparen hello \\rparen $$"}</Latex>
       </h2>
       <div style={{ border: "1px solid grey" }}>
@@ -130,6 +138,7 @@ const EditorFunctional = () => {
           </button>
           <button onMouseDown={addCustomStyle}>red</button>
           <button onMouseDown={onHeading}>h1</button>
+          <button onMouseDown={test}>test</button>
         </div>
 
         <Editor

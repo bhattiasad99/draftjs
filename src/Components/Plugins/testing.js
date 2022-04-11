@@ -6,7 +6,7 @@ export default () => {
   return {
     customStyleMap: {
       custom: {
-        background: "red",
+        background: "green",
       },
     },
     keyBindingFn: (e) => {
@@ -16,9 +16,6 @@ export default () => {
     },
     handleKeyCommand: (command, editorState, _, methods) => {
       if (command === "test") {
-        console.log("hello");
-        // window.alert("hello");
-        console.log(methods);
         methods.setEditorState(
           RichUtils.toggleInlineStyle(editorState, "custom")
         );
